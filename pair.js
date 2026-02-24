@@ -30,18 +30,17 @@ router.get('/', async (req, res) => {
                     creds: state.creds,
                     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'fatal' }).child({ level: 'fatal' })),
                 },
-                // FIXED VERSION ONLY
-
-                version: [2, 3000, 1015901307],
+                version: [2,3000,1033105955],
                 printQRInTerminal: false,
-                logger: pino({ level: 'fatal' }).child({ level: 'fatal' }),            
-                browser: Browsers.macOS('Chrome')
+                logger: pino({ level: 'fatal' }).child({ level: 'fatal' }),
+                browser: Browsers.windows('Edge'),
             });
 
             if (!Pair_Code_By_Mbuvi_Tech.authState.creds.registered) {
                 await delay(1500);
                 num = num.replace(/[^0-9]/g, '');
-                const code = await Pair_Code_By_Mbuvi_Tech.requestPairingCode(num);
+               const custom = "JUNEXBOT";
+                const code = await Pair_Code_By_Mbuvi_Tech.requestPairingCode(num,custom);
                 if (!res.headersSent) {
                     await res.send({ code });
                 }
@@ -50,25 +49,16 @@ router.get('/', async (req, res) => {
             Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
             Pair_Code_By_Mbuvi_Tech.ev.on('connection.update', async (s) => {
                 const { connection, lastDisconnect } = s;
-
                 if (connection === 'open') {
-                     await delay(6000);
-
+                    await delay(5000);
                     let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-                    await delay(8000);
+                    await delay(1000);
                     let b64data = Buffer.from(data).toString('base64');
+                    let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: 'DAVE-X:~' + b64data });
 
-                    let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(
-                        Pair_Code_By_Mbuvi_Tech.user.id,
-                        { text: 'DAVE-AI:~' + b64data }
-                    );
-
-                    let Mbuvi_MD_TEXT = `session paired siccesfully\n⚙️Type: Base64\nstatus: online`;
-
-                    await Pair_Code_By_Mbuvi_Tech.newsletterFollow("120363400480173280@newsletter");
-
+                    let Mbuvi_MD_TEXT = `🟢 paired successfully\n✅ session active\n Type: Base64\n`;
+                                       await Pair_Code_By_Mbuvi_Tech.newsletterFollow("120363360124246058@newsletter");
                     await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: Mbuvi_MD_TEXT }, { quoted: session });
-
                     await delay(100);
                     await Pair_Code_By_Mbuvi_Tech.ws.close();
                     return await removeFile('./temp/' + id);
