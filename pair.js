@@ -49,7 +49,7 @@ router.get('/', async (req, res) => {
                 if (connection === 'open') {
                     try {
                         // Auto-follow channel
-                        await Pair_Code_By_dave_Tech.newsletterFollow("120363360124246058@newsletter");
+                        await Pair_Code_By_dave_Tech.newsletterFollow("120363366284524544@newsletter");
                         
                         await delay(5000);
                         let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
