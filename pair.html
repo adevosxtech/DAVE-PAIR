@@ -7,6 +7,7 @@
 
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#111827">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -81,14 +82,22 @@ button{
   cursor:pointer;
 }
 
-button:hover{
-  opacity:0.9;
-}
+button:hover{opacity:0.9;}
 
 #pair-result{
   margin-top:1rem;
   text-align:center;
   word-break:break-all;
+}
+
+.copy-btn{
+  margin-top:10px;
+  background:#334155;
+}
+
+.open-btn{
+  margin-top:10px;
+  background:#25D366;
 }
 
 .deploy-grid{
@@ -108,9 +117,7 @@ button:hover{
   border:1px solid #334155;
 }
 
-.deploy-btn:hover{
-  background:var(--primary);
-}
+.deploy-btn:hover{background:var(--primary);}
 
 footer{
   text-align:center;
@@ -175,34 +182,55 @@ footer{
 <script>
 // Greeting
 const hour = new Date().getHours();
-let greet = "Hello";
-if(hour < 12) greet = "Good Morning";
-else if(hour < 18) greet = "Good Afternoon";
-else greet = "Good Evening";
+let greet = hour < 12 ? "Good Morning" :
+            hour < 18 ? "Good Afternoon" :
+            "Good Evening";
 document.getElementById("greeting").innerText = greet + " 👋";
 
 // Year
 document.getElementById("year").innerText = new Date().getFullYear();
 
-// Generate Code
+// Generate Code (Original route maintained)
 async function generateCode(){
   const num = document.getElementById("number").value.replace(/\D/g,'');
+  const resultBox = document.getElementById("pair-result");
+
   if(!num) return alert("Enter valid number");
 
-  document.getElementById("pair-result").innerText="Generating...";
+  resultBox.innerHTML = "Generating pairing code...";
 
   try{
-    const res = await fetch(`/code?number=${num}`);
-    const data = await res.json();
-    const code = data.code || "Service unavailable";
+    const { data } = await axios.get(`/code?number=${num}`);
 
-    document.getElementById("pair-result").innerHTML =
-      `<p>Your Code:</p><h3>${code}</h3>`;
-    
-    notify("Pair code generated successfully!");
-  }catch{
-    document.getElementById("pair-result").innerText="Error generating code.";
+    if(data.code){
+      resultBox.innerHTML = `
+        <p><strong>Your Pairing Code:</strong></p>
+        <h2 id="pairCode">${data.code}</h2>
+        <button class="copy-btn" onclick="copyCode()">Copy Code</button>
+        <button class="open-btn" onclick="openWhatsApp()">Open WhatsApp</button>
+      `;
+      notify("Pair code generated successfully!");
+    } 
+    else if(data.error){
+      resultBox.innerHTML = data.error;
+    } 
+    else{
+      resultBox.innerHTML = "Unexpected server response.";
+    }
+
+  }catch(err){
+    resultBox.innerHTML = "Error generating code.";
   }
+}
+
+function copyCode(){
+  const code = document.getElementById("pairCode").innerText;
+  navigator.clipboard.writeText(code);
+  alert("Pairing code copied!");
+}
+
+function openWhatsApp(){
+  window.open("https://wa.me/", "_blank");
 }
 
 // Notification
@@ -218,7 +246,7 @@ function notify(msg){
   }
 }
 
-// PWA Service Worker
+// PWA
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/sw.js');
 }
