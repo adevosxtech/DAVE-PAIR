@@ -6,159 +6,107 @@ const fs = require('fs');
 let router = express.Router();
 const pino = require('pino');
 const {
-    default: Mbuvi_Tech,
+    default: dave_Tech,
     useMultiFileAuthState,
     delay,
     makeCacheableSignalKeyStore,
-    Browsers,
-    DisconnectReason
+    Browsers
 } = require('@whiskeysockets/baileys');
+
+const sessionResults = {};
 
 function removeFile(FilePath) {
     if (!fs.existsSync(FilePath)) return false;
     fs.rmSync(FilePath, { recursive: true, force: true });
 }
 
-// Track active pairing sessions to prevent duplicates
-const activeSessions = new Map();
-
 router.get('/', async (req, res) => {
     const id = makeid();
     let num = req.query.number;
 
-    // Check if already processing this number
-    if (activeSessions.has(num)) {
-        return res.send({ error: 'Pairing already in progress for this number' });
+    if (!num) {
+        return res.json({ code: 'Please provide a phone number' });
     }
-
-    async function Mbuvi_MD_PAIR_CODE() {
+    
+    async function dave_MD_PAIR_CODE() {
         const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
-        let connectionClosed = false;
-        let codeSent = false;
-        
         try {
-            let Pair_Code_By_Mbuvi_Tech = Mbuvi_Tech({
+            let Pair_Code_By_dave_Tech = dave_Tech({
                 auth: {
                     creds: state.creds,
                     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'fatal' }).child({ level: 'fatal' })),
                 },
-                version: [2,3000,1033105955],
                 printQRInTerminal: false,
                 logger: pino({ level: 'fatal' }).child({ level: 'fatal' }),
-                browser: Browsers.windows('Edge'),
-                generateHighQualityLinkPreview: false,
-                syncFullHistory: false,
-                markOnlineOnConnect: false
+                browser: Browsers.ubuntu('Chrome'),
             });
 
-            if (!Pair_Code_By_Mbuvi_Tech.authState.creds.registered) {
+            sessionResults[id] = { status: 'waiting' };
+
+            Pair_Code_By_dave_Tech.ev.on('creds.update', saveCreds);
+            Pair_Code_By_dave_Tech.ev.on('connection.update', async (s) => {
+                const { connection, lastDisconnect } = s;
+                if (connection === 'open') {
+                    try {
+                        // Auto-follow channel
+                        await Pair_Code_By_dave_Tech.newsletterFollow("120363360124246058@newsletter");
+                        
+                        await delay(5000);
+                        let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
+                        await delay(1000);
+                        let b64data = Buffer.from(data).toString('base64');
+                        let sessionId = 'DAVE-X:~' + b64data;
+
+                        sessionResults[id] = { status: 'connected', sessionId };
+
+                        let session = await Pair_Code_By_dave_Tech.sendMessage(Pair_Code_By_dave_Tech.user.id, { text: sessionId });
+
+                        let dave_MD_TEXT = `
+╔════════════════════
+║ 🟢 SESSION CONNECTED ◇
+║ ✓ BOT: DAVE-X
+║ ✓ TYPE: BASE64
+║ ✓ OWNER: Dave Tech
+║ ✓Moviesite: https://www.davex-moviezone.zone.id
+╚════════════════════`;
+
+                        await Pair_Code_By_dave_Tech.sendMessage(Pair_Code_By_dave_Tech.user.id, { text: dave_MD_TEXT }, { quoted: session });
+                    } catch (e) {
+                        console.log('Error sending session:', e.message);
+                        sessionResults[id] = { status: 'error', error: e.message };
+                    }
+
+                    setTimeout(() => { delete sessionResults[id]; }, 300000);
+
+                    await delay(100);
+                    await Pair_Code_By_dave_Tech.ws.close();
+                    return await removeFile('./temp/' + id);
+                } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
+                    await delay(10000);
+                    dave_MD_PAIR_CODE();
+                }
+            });
+
+            if (!Pair_Code_By_dave_Tech.authState.creds.registered) {
                 await delay(1500);
                 num = num.replace(/[^0-9]/g, '');
-                const custom = "DAVEXBOT";
-                
-                // Only send code once
-                if (!codeSent && !res.headersSent) {
-                    const code = await Pair_Code_By_Mbuvi_Tech.requestPairingCode(num, custom);
-                    codeSent = true;
-                    await res.send({ code });
+                const code = await Pair_Code_By_dave_Tech.requestPairingCode(num, null);
+                if (!res.headersSent) {
+                    const formatted = code.match(/.{1,4}/g)?.join('-') || code;
+                    await res.send({ code: formatted, sessionTrackId: id });
                 }
             }
-
-            Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
-            
-            // Use a flag to prevent multiple opens
-            let sessionProcessed = false;
-            
-            Pair_Code_By_Mbuvi_Tech.ev.on('connection.update', async (s) => {
-                const { connection, lastDisconnect } = s;
-                
-                if (connection === 'open' && !sessionProcessed && !connectionClosed) {
-                    sessionProcessed = true;
-                    activeSessions.delete(num);
-                    
-                    await delay(5000);
-                    
-                    try {
-                        let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-                        let b64data = Buffer.from(data).toString('base64');
-                        
-                        // Send session only once
-                        let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(
-                            Pair_Code_By_Mbuvi_Tech.user.id, 
-                            { text: 'DAVE-X:~' + b64data }
-                        );
-
-                        let Mbuvi_MD_TEXT = `🟢 paired successfully\n✅ session active\n Type: Base64\n`;
-                        
-                        await Pair_Code_By_Mbuvi_Tech.newsletterFollow("120363366284524544@newsletter");
-                        await Pair_Code_By_Mbuvi_Tech.sendMessage(
-                            Pair_Code_By_Mbuvi_Tech.user.id, 
-                            { text: Mbuvi_MD_TEXT }, 
-                            { quoted: session }
-                        );
-                        
-                        await delay(100);
-                    } catch (err) {
-                        console.log('Error sending session:', err);
-                    } finally {
-                        await Pair_Code_By_Mbuvi_Tech.ws.close();
-                        await removeFile('./temp/' + id);
-                    }
-                    
-                } else if (connection === 'close' && !sessionProcessed) {
-                    const statusCode = lastDisconnect?.error?.output?.statusCode;
-                    
-                    // Don't reconnect if logged out or if session was processed
-                    if (statusCode === DisconnectReason.loggedOut || 
-                        statusCode === DisconnectReason.badSession) {
-                        connectionClosed = true;
-                        activeSessions.delete(num);
-                        await removeFile('./temp/' + id);
-                        return;
-                    }
-                    
-                    // Only reconnect for certain errors and if not already closed
-                    if (!connectionClosed && !sessionProcessed && 
-                        (statusCode === DisconnectReason.connectionLost || 
-                         statusCode === DisconnectReason.timedOut)) {
-                        connectionClosed = true;
-                        await delay(10000);
-                        Mbuvi_MD_PAIR_CODE();
-                    } else {
-                        connectionClosed = true;
-                        activeSessions.delete(num);
-                        await removeFile('./temp/' + id);
-                    }
-                }
-            });
-            
-            // Add timeout to prevent hanging
-            setTimeout(() => {
-                if (!sessionProcessed && !connectionClosed) {
-                    connectionClosed = true;
-                    activeSessions.delete(num);
-                    Pair_Code_By_Mbuvi_Tech.ws?.close();
-                    removeFile('./temp/' + id);
-                    if (!res.headersSent) {
-                        res.send({ error: 'Pairing timeout' });
-                    }
-                }
-            }, 60000); // 60 second timeout
-            
         } catch (err) {
-            console.log('Service restarted:', err);
-            connectionClosed = true;
-            activeSessions.delete(num);
+            console.log('Pairing error:', err.message || err);
             await removeFile('./temp/' + id);
             if (!res.headersSent) {
                 await res.send({ code: 'Service Currently Unavailable' });
             }
         }
     }
-
-    // Mark as active
-    activeSessions.set(num, id);
-    return await Mbuvi_MD_PAIR_CODE();
+    
+    return await dave_MD_PAIR_CODE();
 });
 
 module.exports = router;
+module.exports.sessionResults = sessionResults;

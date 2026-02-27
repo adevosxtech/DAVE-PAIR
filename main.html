@@ -1,507 +1,515 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Digitex Xmd Bot" />
-  <title>DAVE SESSION</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-<style>
-    :root {
-      --primary: linear-gradient(135deg, #1E90FF, #800000);
-      --bg: #000000;
-      --glass: rgba(255, 255, 255, 0.05);
-      --text: #ffffff;
-      --muted: #228B22;
-      --highlight: #696969;
-      --radius: 16px;
-      --blur: 12px;
-      --transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      --glow: 0 0 15px rgba(0, 212, 255, 0.3);
-    }
-
-    *, *::before, *::after {
-      box-sizing: border-box;
+  <meta charset="UTF-8">
+  <title>DAVEX SESSION</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
 
     body {
-      font-family: 'JetBrains Mono', monospace;
-      background: var(--bg);
-      color: var(--text);
       display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
       min-height: 100vh;
-      line-height: 1.6;
+      margin: 0;
+      background: #000000;
+      font-family: 'Exo 2', sans-serif;
+      color: #e5f5f1;
+      position: relative;
+      overflow-x: hidden;
     }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.5rem 3rem;
-      background: var(--glass);
-      backdrop-filter: blur(var(--blur));
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      position: sticky;
+    /* Animated gradient background */
+    .gradient-bg {
+      position: fixed;
       top: 0;
-      z-index: 100;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(0, 255, 170, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 136, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 0, 170, 0.05) 0%, transparent 50%);
+      z-index: -2;
+      animation: gradientShift 8s ease infinite;
     }
 
-    .logo {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      background: var(--primary);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: var(--glow);
+    @keyframes gradientShift {
+      0%, 100% {
+        background: 
+          radial-gradient(circle at 20% 80%, rgba(0, 255, 170, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(0, 136, 255, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 40% 40%, rgba(255, 0, 170, 0.05) 0%, transparent 50%);
+      }
+      50% {
+        background: 
+          radial-gradient(circle at 80% 80%, rgba(0, 255, 170, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 20% 20%, rgba(0, 136, 255, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 60% 60%, rgba(255, 0, 170, 0.05) 0%, transparent 50%);
+      }
     }
 
-    .status {
-      display: flex;
-      gap: 1.5rem;
+    /* Grid pattern overlay */
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 255, 170, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 170, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: -1;
+      animation: gridMove 20s linear infinite;
     }
 
-    .status-item {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 0.6rem 1.2rem;
-      border-radius: 50px;
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      font-size: 0.9rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: var(--transition);
+    @keyframes gridMove {
+      0% {
+        transform: translate(0, 0);
+      }
+      100% {
+        transform: translate(50px, 50px);
+      }
     }
 
-    .status-item:hover {
-      background: rgba(0, 212, 255, 0.1);
-      border-color: var(--highlight);
+    /* Animated background particles */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
     }
 
-    .status-item i {
-      color: var(--highlight);
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: float 15s infinite linear;
     }
 
-    main {
-      flex: 1;
-      padding: 3rem;
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.7;
+      }
+      90% {
+        opacity: 0.7;
+      }
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 2.5rem;
-    }
-
-    .tools {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      width: 100%;
-      max-width: 1200px;
-    }
-
-    .tool {
-      background: var(--glass);
-      backdrop-filter: blur(var(--blur));
-      border-radius: var(--radius);
-      padding: 2rem;
-      text-align: center;
-      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
-      transition: var(--transition);
-      cursor: pointer;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .tool::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
-      opacity: 0;
-      transition: var(--transition);
-    }
-
-    .tool:hover {
-      transform: translateY(-8px);
-      background: rgba(255, 255, 255, 0.08);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), var(--glow);
-      border-color: rgba(0, 212, 255, 0.2);
-    }
-
-    .tool:hover::before {
-      opacity: 1;
-    }
-
-    .tool i {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      display: block;
-      background: var(--primary);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      transition: var(--transition);
-    }
-
-    .tool h3 {
-      font-family: 'Orbitron', sans-serif;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      letter-spacing: 1px;
-    }
-
-    .muted {
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .note {
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-top: 1rem;
-      text-align: center;
+      justify-content: center;
+      width: 90%;
       max-width: 800px;
-      padding: 1rem;
-      border-radius: var(--radius);
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .note a {
-      color: var(--highlight);
-      text-decoration: none;
-      font-weight: 600;
-      transition: var(--transition);
-    }
-
-    .note a:hover {
-      text-shadow: 0 0 10px var(--highlight);
-    }
-
-    .music-player {
-      width: 100%;
-      max-width: 1000px;
-      background: var(--glass);
-      border-radius: var(--radius);
       padding: 2rem;
-      backdrop-filter: blur(var(--blur));
-      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .music-player h2 {
-      font-family: 'Orbitron', sans-serif;
-      margin-bottom: 1.5rem;
-      letter-spacing: 1px;
-      background: var(--primary);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: inline-block;
-    }
-
-    .track {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 1.2rem;
-      border-radius: var(--radius);
-      margin-bottom: 1rem;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      transition: var(--transition);
-    }
-
-    .track:hover {
-      background: rgba(0, 0, 0, 0.4);
-      border-color: rgba(0, 212, 255, 0.2);
-    }
-
-    .progress {
-      width: 300px;
-      height: 6px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 3px;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.8),
+        0 0 50px rgba(0, 255, 170, 0.2),
+        0 0 100px rgba(0, 136, 255, 0.1);
+      border: 1px solid rgba(0, 255, 170, 0.3);
+      position: relative;
       overflow: hidden;
-      position: relative;
     }
 
-    .progress-fill {
-      width: 0%;
-      background: linear-gradient(90deg, #FF4500, #000000);
-      height: 100%;
-      transition: width 0.1s linear;
-      position: relative;
-    }
-
-    .progress-fill::after {
+    .container::before {
       content: '';
       position: absolute;
-      right: 0;
-      top: -2px;
-      width: 10px;
-      height: 10px;
-      background: white;
-      border-radius: 50%;
-      transform: translateX(50%);
-      opacity: 0;
-      transition: opacity 0.2s;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, 
+        #00ffaa, #0088ff, #ff00aa, #00ffaa);
+      animation: shimmer 3s infinite linear;
     }
 
-    .track:hover .progress-fill::after {
-      opacity: 1;
+    .container::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(0, 255, 170, 0.1), 
+        transparent);
+      animation: shine 6s infinite;
     }
 
-    button {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid var(--highlight);
-      padding: 0.6rem 1.2rem;
-      border-radius: 50px;
-      color: white;
-      cursor: pointer;
-      font-weight: 600;
-      font-family: 'JetBrains Mono', monospace;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+    @keyframes shimmer {
+      0% { background-position: -100% 0; }
+      100% { background-position: 200% 0; }
     }
 
-    button:hover {
-      background: rgba(0, 212, 255, 0.1);
-      box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
-      transform: scale(1.05);
+    @keyframes shine {
+      0% { left: -100%; }
+      20% { left: 100%; }
+      100% { left: 100%; }
     }
 
-    .controls {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-    }
-
-    .time {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
-      color: var(--muted);
-      min-width: 50px;
+    .title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 1.5rem;
       text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      background: linear-gradient(45deg, #00ffaa, #0088ff, #ff00aa, #00ffaa);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
+      animation: gradientShift 4s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 2.5rem;
+      text-align: center;
+      font-weight: 300;
+      max-width: 600px;
+      line-height: 1.6;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      color: rgba(229, 245, 241, 0.9);
+    }
+
+    .buttons-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    .btn {
+      --color: #e5f5f1;
+      --color2: #000000;
+      width: 220px;
+      padding: 1.2em 2em;
+      background: rgba(0, 255, 170, 0.1);
+      border-radius: 12px;
+      border: 1px solid rgba(0, 255, 170, 0.3);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      z-index: 1;
+      font-weight: 600;
+      font-size: 1rem;
+      font-family: 'Exo 2', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color);
+      margin-bottom: 0;
+      box-shadow: 
+        0 5px 15px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(0, 255, 170, 0.1);
+    }
+
+    .btn::after, .btn::before {
+      content: '';
+      display: block;
+      height: 100%;
+      width: 100%;
+      transform: skew(90deg) translate(-50%, -50%);
+      position: absolute;
+      inset: 50%;
+      left: 25%;
+      z-index: -1;
+      transition: .5s ease-out;
+      background: linear-gradient(45deg, #00ffaa, #0088ff, #ff00aa);
+    }
+
+    .btn::before {
+      top: -50%;
+      left: -25%;
+      transform: skew(90deg) rotate(180deg) translate(-50%, -50%);
+    }
+
+    .btn:hover::before {
+      transform: skew(45deg) rotate(180deg) translate(-50%, -50%);
+    }
+
+    .btn:hover::after {
+      transform: skew(45deg) translate(-50%, -50%);
+    }
+
+    .btn:hover {
+      color: var(--color2);
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 
+        0 15px 25px rgba(0, 255, 170, 0.4),
+        0 0 30px rgba(0, 255, 170, 0.3);
+    }
+
+    .btn:active {
+      filter: brightness(.9);
+      transform: scale(.98) translateY(-2px);
+    }
+
+    .btn i {
+      margin-right: 8px;
+      font-size: 1.2em;
+      text-shadow: 0 0 5px currentColor;
+    }
+
+    /* Individual button colors */
+    .btn:nth-child(1) {
+      --glow-color: rgba(0, 255, 170, 0.6);
+    }
+
+    .btn:nth-child(2) {
+      --glow-color: rgba(0, 136, 255, 0.6);
+    }
+
+    .btn:nth-child(3) {
+      --glow-color: rgba(255, 0, 170, 0.6);
+    }
+
+    .btn:nth-child(1):hover {
+      box-shadow: 
+        0 15px 25px rgba(0, 255, 170, 0.4),
+        0 0 30px rgba(0, 255, 170, 0.3),
+        0 0 50px rgba(0, 255, 170, 0.2);
+    }
+
+    .btn:nth-child(2):hover {
+      box-shadow: 
+        0 15px 25px rgba(0, 136, 255, 0.4),
+        0 0 30px rgba(0, 136, 255, 0.3),
+        0 0 50px rgba(0, 136, 255, 0.2);
+    }
+
+    .btn:nth-child(3):hover {
+      box-shadow: 
+        0 15px 25px rgba(255, 0, 170, 0.4),
+        0 0 30px rgba(255, 0, 170, 0.3),
+        0 0 50px rgba(255, 0, 170, 0.2);
+    }
+
+    .footer {
+      margin-top: 2.5rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: rgba(229, 245, 241, 0.7);
+      padding: 1rem;
+      border-top: 1px solid rgba(0, 255, 170, 0.2);
+      width: 100%;
+      position: relative;
+    }
+
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, 
+        transparent, 
+        #00ffaa, 
+        #0088ff, 
+        #ff00aa, 
+        transparent);
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { 
+        box-shadow: 
+          0 0 0 0 rgba(0, 255, 170, 0.4),
+          0 5px 15px rgba(0, 0, 0, 0.5);
+      }
+      70% { 
+        box-shadow: 
+          0 0 0 15px rgba(0, 255, 170, 0),
+          0 5px 15px rgba(0, 0, 0, 0.5);
+      }
+      100% { 
+        box-shadow: 
+          0 0 0 0 rgba(0, 255, 170, 0),
+          0 5px 15px rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    /* Glowing text effect */
+    .glow-text {
+      text-shadow: 
+        0 0 5px currentColor,
+        0 0 10px currentColor,
+        0 0 15px currentColor,
+        0 0 20px currentColor;
+      animation: textGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes textGlow {
+      from {
+        text-shadow: 
+          0 0 5px currentColor,
+          0 0 10px currentColor,
+          0 0 15px currentColor;
+      }
+      to {
+        text-shadow: 
+          0 0 10px currentColor,
+          0 0 20px currentColor,
+          0 0 30px currentColor,
+          0 0 40px currentColor;
+      }
+    }
+
+    /* Scan lines effect */
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(0, 0, 0, 0.1) 50%
+      );
+      background-size: 100% 4px;
+      z-index: -1;
+      pointer-events: none;
+      animation: scanline 10s linear infinite;
+    }
+
+    @keyframes scanline {
+      0% {
+        background-position: 0 0;
+      }
+      100% {
+        background-position: 0 100%;
+      }
     }
 
     @media (max-width: 768px) {
-      header {
-        padding: 1rem 1.5rem;
-        flex-direction: column;
-        gap: 1rem;
+      .title {
+        font-size: 2rem;
       }
-
-      main {
-        padding: 1.5rem;
+      
+      .subtitle {
+        font-size: 1rem;
       }
-
-      .tools {
-        grid-template-columns: 1fr;
-      }
-
-      .track {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-      }
-
-      .progress {
+      
+      .btn {
         width: 100%;
+        max-width: 300px;
       }
-
-      .controls {
-        width: 100%;
-        justify-content: space-between;
+      
+      .buttons-container {
+        flex-direction: column;
+        align-items: center;
       }
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <header>
-    <div class="logo">DAVE</div>
-    <div class="status">
-      <div class="status-item"><i class="fas fa-bolt"></i> <span id="battery">--%</span></div>
-      <div class="status-item"><i class="fas fa-wifi"></i> <span id="ip">Loading...</span></div>
-    </div>
-  </header>
 
-  <main>
-    <div class="tools">
-      <div class="tool" onclick="window.open(`/pair`)">
-        <i class="fas fa-link"></i>
-        <h3>PAIR CODE</h3>
-        <p class="muted">Connect to WhatsApp by pairing your code</p>
-      </div>
-      <div class="tool" onclick="window.open(`/qr`)">
-        <i class="fas fa-qrcode"></i>
-        <h3>QR CODE</h3>
-        <p class="muted">Alternative connection with scanning your device</p>
-      </div>
-      <div class="tool" onclick="window.open(`https://github.com/giftdee/DAVE_XMD`)">
-        <i class="fab fa-github"></i>
-        <h3>Open DAVE-XMD Repo</h3>
-        <p class="muted">Bot Repo</p>
-      </div>
-      <div class="tool" onclick="window.open(`https://developerdave.com`)">
-        <i class="fab fa-page"></i>
-        <h3>Support Owner Dave Host Website Page by using</h3>
-        <p class="muted">Host Website</p>
-      </div>
-      <div class="tool" onclick="window.open(`https://wa.me/254104260236?text=hellow sir`)">
-        <i class="fas fa-headset"></i>
-        <h3>CONTACT OWNER</h3>
-        <p class="muted">Developer and Support your project</p>
-      </div>
-      <div class="tool" onclick="window.open(`https://whatsapp.com/channel/0029VbApvFQ2Jl84lhONkc3k`)">
-        <i class="fas fa-broadcast-tower"></i>
-        <h3>WA CHANNEL</h3>
-        <p class="muted">Get all Bots Update and New Script here</p>
-      </div>
-    </div>
+  <!-- Background elements -->
+  <div class="gradient-bg"></div>
+  <div class="grid-overlay"></div>
+  <div class="scanlines"></div>
+  <div class="particles" id="particles"></div>
 
-    <div class="note">
-      If you encounter any issues, please contact the developer for support.🤝
+  <div class="container">
+    <h1 class="title">DAVE X SESSION</h1>
+    <p class="subtitle">Choose your preferred option below.</p>
+    
+    <div class="buttons-container">
+      <button onclick="window.open(`/pair`)" class="btn pulse"><i class="fas fa-link"></i> PAIR CODE</button>
+      <button onclick="window.open(`/qr`)" class="btn"><i class="fas fa-qrcode"></i> QR SCAN</button>
+      <button onclick="window.open(`https://github.com/vinpink2/JUN/fork`)" class="btn"><i class="fab fa-github"></i> REPO FORK</button>
     </div>
+    
+    <div class="footer">
+      <p class="glow-text">DAVE X &copy; 2025 | Secure connection </p>
+    </div>
+  </div>
 
-    <div class="music-player">
-      <h2>NOW PLAYING</h2>
-      <div class="track">
-        <div>
-          <strong>Dave Song</strong>
-          <div class="muted">Dev GIFTED DEV</div>
-        </div>
-        <div class="controls">
-          <button onclick="togglePlay('audio1')"><i class="fas fa-play"></i> PLAY</button>
-          <div class="progress"><div class="progress-fill" id="progress1"></div></div>
-          <span class="time" id="time1">0:00</span>
-        </div>
-        <audio id="audio1" src="https://files.catbox.moe/tkjzh7.m4a"></audio>
-      </div>
-    </div>
-  </main>
   <script>
-    // Smooth animations
-    document.addEventListener('DOMContentLoaded', () => {
-      document.body.style.opacity = '0';
-      setTimeout(() => {
-        document.body.style.transition = 'opacity 0.5s ease';
-        document.body.style.opacity = '1';
-      }, 100);
-    });
-
-    // Update clock in title
-    const updateTime = () => {
-      const update = () => {
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
-        document.title = `DAVE XMD MD | ${timeStr}`;
-      };
-      update();
-      setInterval(update, 1000);
-    }
-
-    // Battery status
-    const updateBattery = async () => {
-      if (navigator.getBattery) {
-        try {
-          const battery = await navigator.getBattery();
-          const setBattery = () => {
-            const batteryPercent = Math.round(battery.level * 100);
-            const batteryElement = document.getElementById('battery');
-            batteryElement.innerText = `${batteryPercent}%`;
-
-            // Add battery icon based on level
-            let batteryIcon = 'fa-bolt';
-            if (batteryPercent <= 20) batteryIcon = 'fa-battery-quarter';
-            else if (batteryPercent <= 50) batteryIcon = 'fa-battery-half';
-            else if (batteryPercent <= 80) batteryIcon = 'fa-battery-three-quarters';
-            else if (batteryPercent <= 100) batteryIcon = 'fa-battery-full';
-
-            batteryElement.previousElementSibling.className = `fas ${batteryIcon}`;
-          };
-
-          battery.addEventListener('levelchange', setBattery);
-          battery.addEventListener('chargingchange', setBattery);
-          setBattery();
-        } catch (error) {
-          console.error('Battery API error:', error);
+    // Create animated background particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 25;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Random properties
+        const size = Math.random() * 8 + 2;
+        const left = Math.random() * 100;
+        const animationDuration = Math.random() * 20 + 10;
+        const animationDelay = Math.random() * 5;
+        const colorValue = Math.random();
+        
+        // Different colors based on random value
+        let color;
+        if (colorValue < 0.33) {
+          color = 'rgba(0, 255, 170, 0.4)';
+        } else if (colorValue < 0.66) {
+          color = 'rgba(0, 136, 255, 0.4)';
+        } else {
+          color = 'rgba(255, 0, 170, 0.4)';
         }
+        
+        particle.style.cssText = `
+          width: ${size}px;
+          height: ${size}px;
+          left: ${left}%;
+          background: ${color};
+          animation-delay: ${animationDelay}s;
+          animation-duration: ${animationDuration}s;
+        `;
+        
+        particlesContainer.appendChild(particle);
       }
     }
 
-    // Music player controls
-    const togglePlay = (id) => {
-      const audio = document.getElementById(id);
-      const progress = document.getElementById('progress1');
-      const time = document.getElementById('time1');
-      const button = document.querySelector('button[onclick*="'+id+'"]');
-
-      if (audio.paused) {
-        audio.play();
-        button.innerHTML = '<i class="fas fa-pause"></i> PAUSE';
-
-        audio.ontimeupdate = () => {
-          const percent = (audio.currentTime / audio.duration) * 100;
-          progress.style.width = percent + '%';
-
-          const minutes = Math.floor(audio.currentTime / 60);
-          const seconds = Math.floor(audio.currentTime % 60);
-          time.textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
-        };
-
-        audio.onended = () => {
-          progress.style.width = '0%';
-          time.textContent = '0:00';
-          button.innerHTML = '<i class="fas fa-play"></i> PLAY';
-        };
-      } else {
-        audio.pause();
-        button.innerHTML = '<i class="fas fa-play"></i> PLAY';
-      }
-    }
-
-    // IP address fetch
-    const fetchIP = async () => {
-      try {
-        const res = await fetch('https://api.ipify.org?format=json');
-        const data = await res.json();
-        document.getElementById('ip').textContent = data.ip;
-      } catch {
-        document.getElementById('ip').textContent = 'Offline';
-      }
-    }
-
-    // Tool hover effects
-    const setupToolHover = () => {
-      const tools = document.querySelectorAll('.tool');
-      tools.forEach(tool => {
-        tool.addEventListener('mouseenter', () => {
-          tool.style.transform = 'translateY(-8px)';
-        });
-        tool.addEventListener('mouseleave', () => {
-          tool.style.transform = 'translateY(0)';
-        });
-      });
-    }
-
-    // Initialize everything
-    const init = () => {
-      updateTime();
-      updateBattery();
-      fetchIP();
-      setupToolHover();
-    };
-
-    window.addEventListener('load', init);
+    // Initialize particles when page loads
+    document.addEventListener('DOMContentLoaded', createParticles);
   </script>
+
 </body>
-  </html>
+</html>
