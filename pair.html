@@ -7,8 +7,6 @@
 
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#111827">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"></script>
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
@@ -40,11 +38,6 @@ header{
 header h1{
   font-size:1.4rem;
   color:var(--primary);
-}
-
-.greeting{
-  font-size:0.9rem;
-  opacity:0.8;
 }
 
 section{
@@ -80,24 +73,25 @@ button{
   color:white;
   font-weight:bold;
   cursor:pointer;
+  margin-top:8px;
 }
 
-button:hover{opacity:0.9;}
+button:hover{
+  opacity:0.9;
+}
 
 #pair-result{
-  margin-top:1rem;
+  margin-top:1.5rem;
   text-align:center;
-  word-break:break-all;
 }
 
-.copy-btn{
-  margin-top:10px;
-  background:#334155;
-}
-
-.open-btn{
-  margin-top:10px;
-  background:#25D366;
+.code-box{
+  background:#0f172a;
+  padding:1rem;
+  border-radius:10px;
+  font-size:1.2rem;
+  letter-spacing:2px;
+  margin-bottom:10px;
 }
 
 .deploy-grid{
@@ -117,7 +111,9 @@ button:hover{opacity:0.9;}
   border:1px solid #334155;
 }
 
-.deploy-btn:hover{background:var(--primary);}
+.deploy-btn:hover{
+  background:var(--primary);
+}
 
 footer{
   text-align:center;
@@ -133,21 +129,19 @@ footer{
 
 <header>
   <h1>DAVE-X</h1>
-  <div class="greeting" id="greeting"></div>
 </header>
 
-<!-- Pair Section -->
 <section>
   <div class="card">
     <h2>Get Pair Code</h2>
     <p>Enter your WhatsApp number with country code.</p>
-    <input type="text" id="number" placeholder="+2547XXXXXXXX">
+    <input type="text" id="number" placeholder="2547XXXXXXXX">
     <button onclick="generateCode()">Generate Code</button>
+
     <div id="pair-result"></div>
   </div>
 </section>
 
-<!-- Deployment Section -->
 <section>
   <h2 style="margin-bottom:1.5rem;">Deploy DAVE-X</h2>
   <div class="deploy-grid">
@@ -167,56 +161,43 @@ footer{
        <i class="fas fa-server"></i> Deploy on Render
     </a>
 
+    <!-- BOT ZIP RETAINED -->
     <a href="https://github.com/Davex-254/Davex-254/archive/refs/heads/main.zip"
        class="deploy-btn">
-       <i class="fas fa-download"></i> Download Files
+       <i class="fas fa-download"></i> Download Bot ZIP
     </a>
 
   </div>
 </section>
 
 <footer>
-© <span id="year"></span> DAVE-X | Repository: Davex-254
+© <span id="year"></span> DAVE-X
 </footer>
 
 <script>
-// Greeting
-const hour = new Date().getHours();
-let greet = hour < 12 ? "Good Morning" :
-            hour < 18 ? "Good Afternoon" :
-            "Good Evening";
-document.getElementById("greeting").innerText = greet + " 👋";
-
-// Year
 document.getElementById("year").innerText = new Date().getFullYear();
 
-// Generate Code (Original route maintained)
 async function generateCode(){
   const num = document.getElementById("number").value.replace(/\D/g,'');
-  const resultBox = document.getElementById("pair-result");
-
   if(!num) return alert("Enter valid number");
 
-  resultBox.innerHTML = "Generating pairing code...";
+  const resultBox = document.getElementById("pair-result");
+  resultBox.innerHTML = "Generating...";
 
   try{
-    const { data } = await axios.get(`/code?number=${num}`);
+    // ✅ CALLING ORIGINAL ROUTE '/'
+    const res = await fetch(`/?number=${num}`);
+    const data = await res.json();
 
-    if(data.code){
-      resultBox.innerHTML = `
-        <p><strong>Your Pairing Code:</strong></p>
-        <h2 id="pairCode">${data.code}</h2>
-        <button class="copy-btn" onclick="copyCode()">Copy Code</button>
-        <button class="open-btn" onclick="openWhatsApp()">Open WhatsApp</button>
-      `;
-      notify("Pair code generated successfully!");
-    } 
-    else if(data.error){
-      resultBox.innerHTML = data.error;
-    } 
-    else{
-      resultBox.innerHTML = "Unexpected server response.";
+    if(!data.code){
+      resultBox.innerHTML = "Service unavailable";
+      return;
     }
+
+    resultBox.innerHTML = `
+      <div class="code-box" id="generated-code">${data.code}</div>
+      <button onclick="copyCode()">Copy Code</button>
+    `;
 
   }catch(err){
     resultBox.innerHTML = "Error generating code.";
@@ -224,29 +205,11 @@ async function generateCode(){
 }
 
 function copyCode(){
-  const code = document.getElementById("pairCode").innerText;
+  const code = document.getElementById("generated-code").innerText;
   navigator.clipboard.writeText(code);
-  alert("Pairing code copied!");
+  alert("Code copied successfully!");
 }
 
-function openWhatsApp(){
-  window.open("https://wa.me/", "_blank");
-}
-
-// Notification
-function notify(msg){
-  if(Notification.permission === "granted"){
-    new Notification("DAVE-X", { body: msg });
-  }else if(Notification.permission !== "denied"){
-    Notification.requestPermission().then(permission=>{
-      if(permission==="granted"){
-        new Notification("DAVE-X", { body: msg });
-      }
-    });
-  }
-}
-
-// PWA
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/sw.js');
 }
