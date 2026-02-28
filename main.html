@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
       --bg-primary: #ffffff;
@@ -36,11 +37,7 @@
       --border-color: #334155;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -48,7 +45,6 @@
       color: var(--text-primary);
       line-height: 1.6;
       min-height: 100vh;
-      position: relative;
     }
 
     .container {
@@ -57,19 +53,32 @@
       padding: 2rem 1rem;
     }
 
-    /* Pair Code Generator Section */
-    .pair-section {
+    /* Hero Section */
+    .hero-section {
       background: var(--bg-primary);
       border-radius: var(--radius-lg);
-      padding: 3rem 2rem;
+      padding: 4rem 2rem;
       text-align: center;
       box-shadow: var(--shadow-lg);
       border: 1px solid var(--border-color);
       margin-bottom: 3rem;
     }
 
-    .pair-section h1 {
-      font-size: 2.5rem;
+    .hero-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .hero-section h1 {
+      font-size: 3rem;
       font-weight: 700;
       margin-bottom: 1rem;
       background: linear-gradient(135deg, var(--accent), var(--accent-hover));
@@ -78,67 +87,100 @@
       color: transparent;
     }
 
-    .pair-section .subtitle {
-      font-size: 1.25rem;
+    .hero-section .subtitle {
+      font-size: 1.15rem;
       color: var(--text-secondary);
       margin-bottom: 3rem;
-      max-width: 600px;
+      max-width: 500px;
       margin-left: auto;
       margin-right: auto;
     }
 
-    .buttons-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+    /* Method Cards */
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 1.5rem;
-      max-width: 800px;
-      margin: 0 auto;
+      max-width: 700px;
+      margin: 0 auto 2rem;
     }
 
-    .btn {
-      padding: 1rem 2rem;
-      border-radius: var(--radius-md);
-      font-weight: 600;
-      font-size: 1rem;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.75rem;
-      transition: var(--transition-base);
-      border: none;
-      cursor: pointer;
-      min-height: 56px;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: white;
-      box-shadow: var(--shadow-md);
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-hover);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .btn-secondary {
-      background: var(--bg-primary);
-      color: var(--text-primary);
+    .method-card {
+      background: var(--bg-secondary);
       border: 2px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.5rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: var(--transition-base);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
     }
 
-    .btn-secondary:hover {
+    .method-card:hover {
       border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
       color: var(--accent);
-      transform: translateY(-2px);
+    }
+
+    .method-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .method-card h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .method-card p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    .method-card .arrow {
+      font-size: 1.2rem;
+      margin-top: auto;
+      opacity: 0.5;
+      transition: var(--transition-base);
+    }
+
+    .method-card:hover .arrow {
+      opacity: 1;
+      transform: translateX(4px);
+    }
+
+    /* GitHub button */
+    .github-row {
+      margin-top: 1.5rem;
     }
 
     .btn-github {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 2rem;
       background: #18181b;
       color: white;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
       border: 2px solid #333;
+      transition: var(--transition-base);
     }
 
     .btn-github:hover {
@@ -148,10 +190,10 @@
       transform: translateY(-2px);
     }
 
-    /* Deployment Areas */
+    /* Deploy Section */
     .deploy-section {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 2rem;
       margin-top: 2rem;
     }
@@ -186,14 +228,13 @@
     }
 
     .deploy-card h3 {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       font-weight: 600;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
 
     .deploy-card p {
       color: var(--text-secondary);
-      line-height: 1.6;
     }
 
     /* Theme Toggle */
@@ -215,9 +256,7 @@
       transition: var(--transition-base);
     }
 
-    .theme-toggle:hover {
-      box-shadow: var(--shadow-lg);
-    }
+    .theme-toggle:hover { box-shadow: var(--shadow-lg); }
 
     /* Footer */
     .footer {
@@ -226,38 +265,17 @@
       margin-top: 4rem;
       color: var(--text-secondary);
       border-top: 1px solid var(--border-color);
+      font-size: 0.9rem;
     }
 
     @media (max-width: 768px) {
-      .container {
-        padding: 1rem;
-      }
-
-      .pair-section {
-        padding: 2rem 1.5rem;
-      }
-
-      .pair-section h1 {
-        font-size: 2rem;
-      }
-
-      .buttons-container {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .btn {
-        width: 100%;
-        max-width: 400px;
-        justify-content: center;
-      }
-
-      .deploy-section {
-        grid-template-columns: 1fr;
-      }
+      .container { padding: 1rem; }
+      .hero-section { padding: 2.5rem 1.5rem; }
+      .hero-section h1 { font-size: 2.2rem; }
+      .method-grid { grid-template-columns: 1fr; }
+      .deploy-section { grid-template-columns: 1fr; }
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
@@ -265,86 +283,93 @@
   </button>
 
   <div class="container">
-    <!-- Pair Code Generator -->
-    <section class="pair-section">
-      <h1>DAVEX SESSION</h1>
-      <p class="subtitle">Generate your session with pair code, QR scan, or fork the repository.</p>
-      
-      <div class="buttons-container">
-        <a href="/pair" class="btn btn-primary">
-          <i class="fas fa-link"></i>
-          Pair Code
+
+    <!-- Hero / Session Generator -->
+    <section class="hero-section">
+      <div class="hero-badge">⚡ WhatsApp Bot Session</div>
+      <h1>DAVE-X</h1>
+      <p class="subtitle">Choose how you'd like to connect your WhatsApp session below.</p>
+
+      <div class="method-grid">
+        <a href="/pair" class="method-card">
+          <div class="method-icon">
+            <i class="fas fa-link"></i>
+          </div>
+          <h3>Pair Code</h3>
+          <p>Enter your number and get a pairing code to link your WhatsApp.</p>
+          <span class="arrow">→</span>
         </a>
-        <a href="/qr" class="btn btn-secondary">
-          <i class="fas fa-qrcode"></i>
-          QR Scan
+
+        <a href="/qr" class="method-card">
+          <div class="method-icon">
+            <i class="fas fa-qrcode"></i>
+          </div>
+          <h3>QR Scan</h3>
+          <p>Scan a QR code directly from your WhatsApp linked devices.</p>
+          <span class="arrow">→</span>
         </a>
-        <a href="https://github.com/Davex/DAVE-X" class="btn btn-github" target="_blank">
-          <i class="fab fa-github"></i>
-          Repo Fork
+      </div>
+
+      <div class="github-row">
+        <a href="https://github.com/Davex-254/Davex-254" class="btn-github" target="_blank">
+          <i class="fab fa-github"></i> Fork on GitHub
         </a>
       </div>
     </section>
 
-    <!-- Deployment Areas -->
+    <!-- Info Cards -->
     <div class="deploy-section">
       <div class="deploy-card">
-        <div class="deploy-icon">
-          <i class="fas fa-server"></i>
-        </div>
+        <div class="deploy-icon"><i class="fas fa-server"></i></div>
         <h3>Node.js Hosting</h3>
-        <p>Deploy your DAVEX bot on professional hosting with unlimited resources and 99.9% uptime.</p>
+        <p>Deploy your DAVE-X bot on professional hosting with unlimited resources and 99.9% uptime.</p>
       </div>
       <div class="deploy-card">
-        <div class="deploy-icon">
-          <i class="fas fa-rocket"></i>
-        </div>
+        <div class="deploy-icon"><i class="fas fa-rocket"></i></div>
         <h3>Fast Deployment</h3>
         <p>Launch sessions instantly with one-click deployment and automatic HTTPS.</p>
       </div>
       <div class="deploy-card">
-        <div class="deploy-icon">
-          <i class="fas fa-shield-alt"></i>
-        </div>
+        <div class="deploy-icon"><i class="fas fa-shield-alt"></i></div>
         <h3>Secure Sessions</h3>
         <p>Enterprise-grade security for your WhatsApp automation with privacy-first design.</p>
       </div>
     </div>
+
   </div>
 
   <footer class="footer">
-    <p>&copy; 2026 DAVEX Session Generator. All rights reserved. | Secure & Fast</p>
+    <p>&copy; <span id="year"></span> DAVE-X Session Generator. All rights reserved. | Secure &amp; Fast</p>
   </footer>
 
   <script>
-    // Theme Toggle
+    document.getElementById("year").innerText = new Date().getFullYear();
+
     const themeToggle = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
-    
+
     function initializeTheme() {
       const savedTheme = localStorage.getItem('theme-mode');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
       let initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', initialTheme);
       localStorage.setItem('theme-mode', initialTheme);
       updateThemeIcon(initialTheme);
     }
-    
+
     function toggleTheme() {
       const currentTheme = document.documentElement.getAttribute('data-theme');
       const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-      
       document.documentElement.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme-mode', newTheme);
       localStorage.setItem('theme-mode-manual', 'true');
       updateThemeIcon(newTheme);
     }
-    
+
     function updateThemeIcon(theme) {
       themeIcon.textContent = theme === 'light' ? '🌙' : '☀️';
     }
-    
+
     themeToggle.addEventListener('click', toggleTheme);
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
       if (!localStorage.getItem('theme-mode-manual')) {
@@ -354,8 +379,7 @@
         updateThemeIcon(newTheme);
       }
     });
-    
-    // Initialize theme on load
+
     document.addEventListener('DOMContentLoaded', initializeTheme);
   </script>
 </body>
