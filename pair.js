@@ -1,335 +1,111 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DAVE-X | Pair Code</title>
+const { makeid } = require('./id');
+const express = require('express');
+const fs = require('fs');
+let router = express.Router();
+const pino = require('pino');
+const {
+    default: dave_Tech,
+    useMultiFileAuthState,
+    delay,
+    makeCacheableSignalKeyStore,
+    Browsers
+} = require('@whiskeysockets/baileys');
 
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#111827">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+const sessionResults = {};
 
-<style>
-:root{
-  --primary:#6366f1;
-  --primary-hover:#5856eb;
-  --bg:#0f172a;
-  --card:#1e293b;
-  --text:#e2e8f0;
-  --text-muted:#94a3b8;
-  --border:#334155;
+function removeFile(FilePath) {
+    if (!fs.existsSync(FilePath)) return false;
+    fs.rmSync(FilePath, { recursive: true, force: true });
 }
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+router.get('/', async (req, res) => {
+    const id = makeid();
+    let num = req.query.number;
 
-body{
-  background:var(--bg);
-  color:var(--text);
-  display:flex;
-  flex-direction:column;
-  min-height:100vh;
-}
-
-header{
-  padding:1.2rem 2rem;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#0b1220;
-  border-bottom:1px solid var(--border);
-}
-
-header h1{
-  font-size:1.4rem;
-  color:var(--primary);
-  font-weight:700;
-}
-
-.back-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:0.5rem;
-  color:var(--text-muted);
-  text-decoration:none;
-  font-size:0.9rem;
-  transition:color 0.2s;
-}
-
-.back-btn:hover{ color:var(--primary); }
-
-section{
-  padding:3rem 1.5rem;
-  max-width:520px;
-  margin:auto;
-  width:100%;
-}
-
-.card{
-  background:var(--card);
-  padding:2.5rem 2rem;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.4);
-  border:1px solid var(--border);
-}
-
-.card h2{
-  font-size:1.6rem;
-  font-weight:700;
-  margin-bottom:0.5rem;
-  background:linear-gradient(135deg,var(--primary),#a78bfa);
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-}
-
-.card p{
-  color:var(--text-muted);
-  margin-bottom:1.5rem;
-  font-size:0.95rem;
-}
-
-.input-group{
-  position:relative;
-  margin:1rem 0;
-}
-
-.input-group i{
-  position:absolute;
-  left:1rem;
-  top:50%;
-  transform:translateY(-50%);
-  color:var(--text-muted);
-}
-
-input{
-  width:100%;
-  padding:0.9rem 0.9rem 0.9rem 2.8rem;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:#0f172a;
-  color:white;
-  font-size:1rem;
-  transition:border-color 0.2s;
-}
-
-input:focus{
-  outline:none;
-  border-color:var(--primary);
-}
-
-input::placeholder{ color:var(--text-muted); }
-
-button{
-  width:100%;
-  padding:0.9rem;
-  border:none;
-  border-radius:10px;
-  background:var(--primary);
-  color:white;
-  font-weight:600;
-  font-size:1rem;
-  cursor:pointer;
-  margin-top:8px;
-  transition:all 0.2s;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:0.5rem;
-}
-
-button:hover{ background:var(--primary-hover); transform:translateY(-1px); }
-button:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
-
-#pair-result{
-  margin-top:1.5rem;
-  text-align:center;
-}
-
-.code-box{
-  background:#0f172a;
-  padding:1.2rem;
-  border-radius:12px;
-  font-size:1.6rem;
-  letter-spacing:4px;
-  font-weight:700;
-  color:var(--primary);
-  margin-bottom:12px;
-  border:1px solid var(--border);
-  word-break:break-all;
-}
-
-.copy-btn{
-  background:#1e293b;
-  border:1px solid var(--border);
-  color:var(--text);
-  padding:0.7rem 1.5rem;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:0.9rem;
-  width:auto;
-  display:inline-flex;
-  transition:all 0.2s;
-  margin-top:0;
-}
-
-.copy-btn:hover{
-  background:var(--primary);
-  border-color:var(--primary);
-  transform:none;
-}
-
-.status-msg{
-  display:flex;
-  align-items:center;
-  gap:0.5rem;
-  justify-content:center;
-  color:var(--text-muted);
-  font-size:0.9rem;
-}
-
-.spinner{
-  width:18px;
-  height:18px;
-  border:2px solid var(--border);
-  border-top-color:var(--primary);
-  border-radius:50%;
-  animation:spin 0.8s linear infinite;
-  flex-shrink:0;
-}
-
-@keyframes spin{ to{ transform:rotate(360deg); } }
-
-.error-msg{
-  color:#f87171;
-  font-size:0.9rem;
-  display:flex;
-  align-items:center;
-  gap:0.5rem;
-  justify-content:center;
-}
-
-.hint{
-  margin-top:1.5rem;
-  padding:1rem;
-  background:#0f172a;
-  border-radius:10px;
-  border:1px solid var(--border);
-  font-size:0.85rem;
-  color:var(--text-muted);
-  text-align:left;
-  line-height:1.7;
-}
-
-.hint strong{ color:var(--text); }
-
-footer{
-  text-align:center;
-  padding:1.2rem;
-  margin-top:auto;
-  background:#0b1220;
-  font-size:0.85rem;
-  color:var(--text-muted);
-  border-top:1px solid var(--border);
-}
-</style>
-</head>
-
-<body>
-
-<header>
-  <h1>DAVE-X</h1>
-  <a href="/" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
-</header>
-
-<section>
-  <div class="card">
-    <h2>Get Pair Code</h2>
-    <p>Enter your WhatsApp number with country code to generate a pairing code.</p>
-
-    <div class="input-group">
-      <i class="fas fa-phone"></i>
-      <input type="tel" id="number" placeholder="2547XXXXXXXX" maxlength="15">
-    </div>
-
-    <button id="generate-btn" onclick="generateCode()">
-      <i class="fas fa-key"></i> Generate Code
-    </button>
-
-    <div id="pair-result"></div>
-
-    <div class="hint">
-      <strong>How to use:</strong><br>
-      1. Open WhatsApp → Settings → Linked Devices<br>
-      2. Tap <strong>Link a Device</strong> → <strong>Link with phone number</strong><br>
-      3. Enter the code shown above
-    </div>
-  </div>
-</section>
-
-<footer>
-  &copy; <span id="year"></span> DAVE-X &mdash; Secure &amp; Fast Session Generator
-</footer>
-
-<script>
-document.getElementById("year").innerText = new Date().getFullYear();
-
-// Allow Enter key to trigger
-document.getElementById("number").addEventListener("keydown", (e) => {
-  if(e.key === "Enter") generateCode();
-});
-
-async function generateCode(){
-  const num = document.getElementById("number").value.replace(/\D/g,'');
-  if(!num || num.length < 7) return alert("Please enter a valid number with country code.");
-
-  const resultBox = document.getElementById("pair-result");
-  const btn = document.getElementById("generate-btn");
-
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Generating...';
-  resultBox.innerHTML = `<div class="status-msg"><div class="spinner"></div> Connecting to WhatsApp...</div>`;
-
-  try{
-    // ✅ Fixed route — pair.js is mounted at /code in index.js
-    const res = await fetch(`/code?number=${num}`);
-
-    if(!res.ok) throw new Error(`Server error: ${res.status}`);
-
-    const data = await res.json();
-
-    if(!data.code || data.code === 'Service Currently Unavailable' || data.code === 'Please provide a phone number'){
-      resultBox.innerHTML = `<div class="error-msg"><i class="fas fa-exclamation-circle"></i> ${data.code || 'Service unavailable, please try again.'}</div>`;
-      return;
+    if (!num) {
+        return res.json({ code: 'Please provide a phone number' });
     }
 
-    resultBox.innerHTML = `
-      <div class="code-box" id="generated-code">${data.code}</div>
-      <button class="copy-btn" onclick="copyCode()"><i class="fas fa-copy"></i> Copy Code</button>
-    `;
+    async function dave_MD_PAIR_CODE() {
+        const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+        try {
+            let Pair_Code_By_dave_Tech = dave_Tech({
+                auth: {
+                    creds: state.creds,
+                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'fatal' }).child({ level: 'fatal' })),
+                },
+                printQRInTerminal: false,
+                logger: pino({ level: 'fatal' }).child({ level: 'fatal' }),
+                browser: Browsers.ubuntu('Chrome'),
+            });
 
-  }catch(err){
-    resultBox.innerHTML = `<div class="error-msg"><i class="fas fa-times-circle"></i> Failed to fetch code. Check your connection.</div>`;
-    console.error(err);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-key"></i> Generate Code';
-  }
-}
+            sessionResults[id] = { status: 'waiting' };
 
-function copyCode(){
-  const code = document.getElementById("generated-code").innerText;
-  navigator.clipboard.writeText(code).then(() => {
-    alert("✅ Code copied successfully!");
-  }).catch(() => {
-    alert("Copy failed, please copy manually.");
-  });
-}
+            Pair_Code_By_dave_Tech.ev.on('creds.update', saveCreds);
+            Pair_Code_By_dave_Tech.ev.on('connection.update', async (s) => {
+                const { connection, lastDisconnect } = s;
+                if (connection === 'open') {
+                    try {
+                        // Auto-follow channel
+                        await Pair_Code_By_dave_Tech.newsletterFollow("120363366284524544@newsletter");
 
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('/sw.js');
-}
-</script>
+                        await delay(5000);
+                        let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
+                        await delay(1000);
+                        let b64data = Buffer.from(data).toString('base64');
+                        let sessionId = 'DAVE-X:~' + b64data;
 
-</body>
-</html>
+                        sessionResults[id] = { status: 'connected', sessionId };
+
+                        let session = await Pair_Code_By_dave_Tech.sendMessage(Pair_Code_By_dave_Tech.user.id, { text: sessionId });
+
+                        let dave_MD_TEXT = `
+╔════════════════════
+║ 🟢 SESSION CONNECTED ◇
+║ ✓ BOT: DAVE-X
+║ ✓ TYPE: BASE64
+║ ✓ OWNER: Dave Tech
+║ ✓ Moviesite: https://www.davex-moviezone.zone.id
+╚════════════════════`;
+
+                        await Pair_Code_By_dave_Tech.sendMessage(Pair_Code_By_dave_Tech.user.id, { text: dave_MD_TEXT }, { quoted: session });
+                    } catch (e) {
+                        console.log('Error sending session:', e.message);
+                        sessionResults[id] = { status: 'error', error: e.message };
+                    }
+
+                    setTimeout(() => { delete sessionResults[id]; }, 300000);
+
+                    await delay(100);
+                    await Pair_Code_By_dave_Tech.ws.close();
+                    return await removeFile('./temp/' + id);
+
+                } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
+                    await delay(10000);
+                    dave_MD_PAIR_CODE();
+                }
+            });
+
+            if (!Pair_Code_By_dave_Tech.authState.creds.registered) {
+                await delay(1500);
+                num = num.replace(/[^0-9]/g, '');
+                const code = await Pair_Code_By_dave_Tech.requestPairingCode(num, null);
+                if (!res.headersSent) {
+                    const formatted = code.match(/.{1,4}/g)?.join('-') || code;
+                    await res.send({ code: formatted, sessionTrackId: id });
+                }
+            }
+        } catch (err) {
+            console.log('Pairing error:', err.message || err);
+            await removeFile('./temp/' + id);
+            if (!res.headersSent) {
+                await res.send({ code: 'Service Currently Unavailable' });
+            }
+        }
+    }
+
+    return await dave_MD_PAIR_CODE();
+});
+
+module.exports = router;
+module.exports.sessionResults = sessionResults;
