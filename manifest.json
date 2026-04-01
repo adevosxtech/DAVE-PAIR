@@ -1,9 +1,0 @@
-{
-  "name": "DAVE-X",
-  "short_name": "DAVE-X",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#111827",
-  "icons": []
-}
