@@ -6,8 +6,8 @@
 * [Heroku](  https://heroku.com/deploy?template=https://github.com/vinpink2/session)
  
  all regards to
- > Giddy Tennor
+ > Adevos-X 
 >
 >
 > 
- > supreme lord
+ > Dave-X
