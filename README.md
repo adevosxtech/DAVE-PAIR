@@ -1,4 +1,4 @@
- ## Adevos-X Bot pairing site
+ ## Adevos-X Bot Pairing Site
  * QR code pair
  * 8 digit pair codes
 
