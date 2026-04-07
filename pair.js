@@ -56,33 +56,14 @@ router.get('/', async (req, res) => {
                     let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: 'ADEVOS-X:~' + b64data });
 
                     let Mbuvi_MD_TEXT = `
-╔════════════════════◇
-║    SESSION CONNECTED
-║ ❍ADEVOS-X BOT
-║ ❍adevos
-╚════════════════════◇
 
-
----
-
-╔════════════════════◇
-║YOU'VE CHOSEN ADEVOS-X BOT
-║ Set the session ID in Heroku:
-║  SESSION_ID: 
-╚════════════════════◇
-╔════════════════════◇
-║ ••• _V𝗶𝘀𝗶𝘁 𝗙𝗼𝗿_H𝗲𝗹𝗽 •••
-║❍ 𝐘𝐨𝐮𝐭𝐮𝐛𝐞: youtube.com
+╔◇ SESSION CONNECTED
+║❍ Adevos-X Bot
 ║❍ 𝐎𝐰𝐧𝐞𝐫: t.me/adevosX
-║❍ 𝐑𝐞𝐩𝐨: https://github.com/adevosxtech/adevosX-Bot
-║❍ 𝐈𝐧𝐬𝐭𝐚𝐠𝐫𝐚𝐦:https://www.instagram.com/adevosx?igsh=eGhhZGF6M3ZreTVz
-║ ☬ ☬ ☬ ☬
-╚═════════════════════◇
-𒂀 Enjoy ADEVOS-X BOT
-
-
-Don't Forget To Give Star⭐ To My Repo
-______________________________
+║❍ CalmX | SilentPower 
+║❍ Thank you for choosing me!
+╚◇
+> Don't Forget To Give Star⭐ To My Repo
 `;
 
                     await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: Mbuvi_MD_TEXT }, { quoted: session });
