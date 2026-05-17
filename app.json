@@ -2,8 +2,8 @@
     "name": "Session Generator",
     "description": "Web Session Generator",
     "logo": "https://files.catbox.moe/bdwqa7.jpg",
-    "repository": "https://github.com/mauricegift/gifted-sess",
-    "keywords": ["Gifted-Tech"],
+    "repository": "https://github.com/adevosxtech/adevosX-Bot",
+    "keywords": ["Adevos-X Tech"],
     "success_url": "/", 
     "buildpacks": [{ "url": "https://github.com/heroku/heroku-buildpack-nodejs#latest" } ],
     "env": {      
